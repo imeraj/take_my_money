@@ -3,7 +3,14 @@ git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 
 ruby '2.6.3'
 
+gem 'slim-rails'
+gem 'simple_form'
+gem 'bootstrap-sass'
+gem 'jquery-rails'
 gem 'devise'
+gem 'money-rails'
+gem 'babel-transpiler'
+gem 'sprockets', github: 'rails/sprockets'
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
 gem 'rails', '~> 6.0.1'
