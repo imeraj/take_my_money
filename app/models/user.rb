@@ -5,4 +5,8 @@ class User < ApplicationRecord
          :recoverable, :rememberable, :validatable
 
   has_many :tickets
+
+  def tickets_in_cart
+    tickets.waiting.all.to_a
+  end
 end
