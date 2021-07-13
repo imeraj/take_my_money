@@ -22,7 +22,7 @@ class ShoppingCart
     tickets_by_performance.each_pair.each_with_object({}) do |pair, result|
       result[pair.first] = pair.last.size
     end
-  end
+  end0
 
   def tickets_by_performance
     tickets.group_by { |t| t.performance.id }
