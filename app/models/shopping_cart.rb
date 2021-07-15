@@ -22,7 +22,7 @@ class ShoppingCart
     tickets_by_performance.each_pair.each_with_object({}) do |pair, result|
       result[pair.first] = pair.last.size
     end
-  end0
+  end
 
   def tickets_by_performance
     tickets.group_by { |t| t.performance.id }
@@ -33,6 +33,8 @@ class ShoppingCart
   end
 
   def total_cost
+    return Money.new(0) if tickets.size.zero?
+
     tickets.map(&:price).sum
   end
 end

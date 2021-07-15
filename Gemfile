@@ -11,6 +11,8 @@ gem 'devise'
 gem 'money-rails'
 gem 'babel-transpiler'
 gem 'sprockets', github: 'rails/sprockets'
+gem 'dotenv-rails'
+gem 'stripe'
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
 gem 'rails', '~> 6.0.1'

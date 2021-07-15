@@ -6,5 +6,6 @@ Rails.application.routes.draw do
   }
 
   resources :events
+  resources :payments
   resource :shopping_cart
 end
