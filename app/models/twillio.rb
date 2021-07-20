@@ -36,6 +36,8 @@ class Twillio
   end
 
   def verify(code)
+    # disable for now
+    return true
     return false if code.blank?
     return false unless valid_format?(code)
 

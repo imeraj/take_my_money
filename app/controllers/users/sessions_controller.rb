@@ -14,7 +14,8 @@ class Users::SessionsController < Devise::SessionsController
     @user = User.find_by(email: params[:user][:email])
     if @user&.valid_password?(params[:user][:password])
       session[:awaiting_twillio_user_id] = @user.id
-      Twillio.new(@user).request_email
+      # disable for now
+      # Twillio.new(@user).request_email
       render :two_factor
     else
       session[:awaiting_twillio_user_id] = nil
@@ -44,4 +45,6 @@ class Users::SessionsController < Devise::SessionsController
   # def configure_sign_in_params
   #   devise_parameter_sanitizer.permit(:sign_in, keys: [:attribute])
   # end
+  #
+  #
 end
