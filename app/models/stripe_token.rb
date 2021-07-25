@@ -1,21 +1,18 @@
 class StripeToken
-  attr_accessor :credit_card_number, :expiration_month, :expiration_year, :cvc
+  attr_accessor :stripe_token
 
   delegate :id, to: :token
 
-  def initialize(credit_card_number:, expiration_month:, expiration_year:, cvc:)
-    @credit_card_number = credit_card_number
-    @expiration_month = expiration_month
-    @expiration_year = expiration_year
-    @cvc = cvc
+  def initialize(stripe_token:)
+    @stripe_token = stripe_token
   end
 
   def token
-    @token ||= Stripe::Token.create(
-      card: {
-        number: credit_card_number, exp_month: expiration_month,
-        exp_year: expiration_year, cvc: cvc
-      })
+    @token ||= stripe_token
+  end
+
+  def id
+    stripe_token
   end
 
   def to_s
