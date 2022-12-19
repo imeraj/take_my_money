@@ -14,6 +14,7 @@ gem 'sprockets', github: 'rails/sprockets'
 gem 'dotenv-rails'
 gem 'stripe'
 gem 'twilio-ruby', '~> 5.57.0'
+gem 'paypal-sdk-rest'
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
 gem 'rails', '~> 6.0.1'
@@ -47,6 +48,7 @@ group :development, :test do
   gem 'pry'
   gem 'factory_bot_rails'
   gem 'faker'
+  gem 'hirb'
 end
 
 group :development do

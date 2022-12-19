@@ -2,4 +2,4 @@
 
 # Configure sensitive parameters which will be filtered from the log file.
 Rails.application.config.filter_parameters += [:password, :password_confirmation,
-                                               :stripe_token]
+                                               :stripe_token, :credit_card_number, :expiration_month, :expiration_year, :cvc]

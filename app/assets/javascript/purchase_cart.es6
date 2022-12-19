@@ -1,27 +1,5 @@
-$(() => new StripeForm())
-
-class StripeForm {
-    constructor() {
-        this.checkoutForm = new CheckoutForm()
-        this.initSubmitHandler()
-    }
-
-    initSubmitHandler() {
-        this.checkoutForm.form().submit((event) => { this.handleSubmit(event) })
-    }
-
-    handleSubmit(event) {
-        event.preventDefault();
-        if (this.checkoutForm.isButtonDisabled()) {
-            return false
-        }
-        this.checkoutForm.disableButton()
-        Stripe.card.createToken(this.checkoutForm.form(), TokenHandler.handle)
-        return true
-    }
-}
-
 class CheckoutForm {
+
     form() { return $("#payment-form") }
 
     button() { return this.form().find(".btn") }
@@ -29,6 +7,20 @@ class CheckoutForm {
     disableButton() { this.button().prop("disabled", true) }
 
     isButtonDisabled() { return this.button().prop("disabled") }
+
+    //
+    paymentTypeRadio() { return $(".payment-type-radio") }
+
+    selectedPaymentType() { return $("input[name=payment_type]:checked").val() }
+
+    creditCardForm() { return $("#credit-card-info") }
+
+    isPayPal() { return this.selectedPaymentType() === "paypal" }
+
+    setCreditCardVisibility() {
+        this.creditCardForm().toggleClass("hidden", this.isPayPal())
+    }
+    //
 
     submit() { this.form().get(0).submit() }
 
@@ -41,6 +33,7 @@ class CheckoutForm {
     }
 }
 
+//
 class TokenHandler {
     static handle(status, response) {
         new TokenHandler(status, response).handle()
@@ -57,3 +50,41 @@ class TokenHandler {
         this.checkoutForm.submit()
     }
 }
+//
+
+//
+class PaymentFormHandler {
+
+    constructor() {
+        this.checkoutForm = new CheckoutForm()
+        this.initSubmitHandler()
+        this.initPaymentTypeHandler()
+    }
+
+    initSubmitHandler() {
+        this.checkoutForm.form().submit((event) => {
+            if (!this.checkoutForm.isPayPal()) {
+                this.handleSubmit(event)
+            }
+        })
+    }
+
+    initPaymentTypeHandler() {
+        this.checkoutForm.paymentTypeRadio().click(() => {
+            this.checkoutForm.setCreditCardVisibility()
+        })
+    }
+
+    handleSubmit(event) {
+        event.preventDefault()
+        if (this.checkoutForm.isButtonDisabled()) {
+            return false
+        }
+        this.checkoutForm.disableButton()
+        Stripe.card.createToken(this.checkoutForm.form(), TokenHandler.handle)
+        return false
+    }
+}
+
+$(() => new PaymentFormHandler())
+//

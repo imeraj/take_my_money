@@ -14,6 +14,7 @@ class AddsToCart
       return if tickets.size != count
       tickets.each { |ticket| ticket.place_in_cart_for(user) }
       self.success = tickets.all?(&:valid?)
+      Rails.logger.debug("#{tickets.inspect}")
       success
     end
   end

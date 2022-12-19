@@ -13,4 +13,7 @@ Rails.application.routes.draw do
   resources :events
   resources :payments
   resource :shopping_cart
+
+  get "paypal/approved", to: "paypal_payments#approved"
+  get "paypal/rejected", to: "paypal_payments#rejected"
 end
