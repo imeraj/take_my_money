@@ -24,6 +24,8 @@ h2 Checkout
 h3 Payment Options
 
 = form_tag(payments_path, class: "form-inline", id: "payment-form") do
+  = hidden_field_tag(:purchase_amount_cents, @cart.total_cost.cents)
+  = hidden_field_tag(:ticket_ids, @cart.tickets.map(&:id))
 
   .paypal
     img(src="https://www.paypal.com/en_US/i/logo/PayPal_mark_37x23.gif"
@@ -38,8 +40,6 @@ h3 Payment Options
     = radio_button_tag(:payment_type,
             :credit, true,
             class: "payment-type-radio", id: "credit_radio")
-
-    = hidden_field_tag(:purchase_amount_cents, @cart.total_cost.cents)
 
     #credit-card-info
       h3 Credit Card Info

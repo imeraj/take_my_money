@@ -1,19 +1,48 @@
 class PurchaseCart
-  attr_accessor :user, :stripe_token, :purchase_amount, :success, :payment
+  attr_accessor :user, :stripe_token, :purchase_amount, :success, :payment, :expected_ticket_ids
 
-  def initialize(user:, purchase_amount_cents:)
+  def initialize(user: nil, purchase_amount_cents: nil, expected_ticket_ids: "")
     @user = user
     @purchase_amount = Money.new(purchase_amount_cents)
+    @expected_ticket_ids = expected_ticket_ids.split(" ").map(&:to_i).sort
+    @continue = true
     @success = false
   end
 
   def run
     Payment.transaction do
-      update_tickets
-      create_payment
+      pre_purchase
       purchase
-      calculate_success
+      post_purchase
+      @success = @continue
+    rescue ActiveRecord::ActiveRecordError => e
+      Rails.logger.error("ACTIVE RECORD ERROR IN TRANSACTION")
+      Rails.logger.error(e)
     end
+  end
+
+  def pre_purchase_valid?
+    purchase_amount == tickets.map(&:price).sum &&
+      expected_ticket_ids == tickets.map(&:id).sort
+  end
+
+  def pre_purchase
+    unless pre_purchase_valid?
+      @continue = false
+      return
+    end
+    update_tickets
+    create_payment
+    @continue = true
+  end
+
+  def post_purchase
+    return unless @continue
+    @continue = calculate_success
+  end
+
+  def calculate_success
+    payment.succeeded?
   end
 
   def tickets

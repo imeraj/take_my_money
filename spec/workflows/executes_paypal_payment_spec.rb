@@ -11,7 +11,7 @@ describe ExecutesPaypalPayment, :vcr, :aggregate_failures do
     let(:workflow) { ExecutesPaypalPayment.new(payment_id: "PAYMENTID", token: "TOKEN", payer_id: "PAYER_ID")}
 
     before(:example) do
-      allow(workflow).to receive(:find_payment).and_return(payment)
+      allow(workflow).to receive(:payment).and_return(payment)
       allow(workflow).to receive(:paypal_payment).and_return(paypal_payment)
       workflow.run
     end

@@ -8,6 +8,7 @@ class PaymentsController < ApplicationController
   def create
     workflow = create_workflow(params[:payment_type])
     workflow.run
+    Rails.logger.debug("#{workflow.inspect}")
     if workflow.success
       redirect_to workflow.redirect_on_success_url || payment_path(id: workflow.payment.reference)
     else
@@ -28,16 +29,17 @@ class PaymentsController < ApplicationController
   def paypal_workflow
     PurchaseCartViaPaypal.new(
       user: current_user,
-      purchase_amount_cents: params[:purchase_amount_cents]
+      purchase_amount_cents: params[:purchase_amount_cents],
+      expected_ticket_ids: params[:ticket_ids]
     )
   end
 
   def stripe_workflow
-    Rails.logger.debug("#{card_params}")
     PurchaseCartViaStripe.new(
       user: current_user,
       stripe_token: StripeToken.new(**card_params),
-      purchase_amount_cents: params[:purchase_amount_cents])
+      purchase_amount_cents: params[:purchase_amount_cents],
+      expected_ticket_ids: params[:ticket_ids])
   end
 
   def card_params

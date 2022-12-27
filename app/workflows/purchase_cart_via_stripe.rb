@@ -1,8 +1,8 @@
 class PurchaseCartViaStripe < PurchaseCart
-  attr_accessor :stripe_token, :stripe_charge
+  attr_accessor :stripe_token, :stripe_charge, :expected_ticket_ids
 
-  def initialize(user:, stripe_token:, purchase_amount_cents:)
-    super(user: user, purchase_amount_cents: purchase_amount_cents)
+  def initialize(user:, stripe_token:, purchase_amount_cents:, expected_ticket_ids:)
+    super(user: user, purchase_amount_cents: purchase_amount_cents, expected_ticket_ids: expected_ticket_ids)
     @stripe_token = stripe_token
   end
 
@@ -14,12 +14,12 @@ class PurchaseCartViaStripe < PurchaseCart
     super.merge(payment_method: "stripe")
   end
 
-  def calculate_success
-    @success = payment.pending?
-  end
-
   def purchase
-    @stripe_charge = StripeCharge.new(token: stripe_token, payment: payment).charge
-    payment.update(status: @stripe_charge.status, response_id: @stripe_charge.id, full_response: @stripe_charge.to_json)
+    return unless @continue
+    @stripe_charge = StripeCharge.new(token: stripe_token, payment: payment)
+    @stripe_charge.charge
+    payment.update!(@stripe_charge.payment_attributes)
+    #    reverse_purchase if payment.failed?
+    #    We don't auto reverse for now to keep track
   end
 end

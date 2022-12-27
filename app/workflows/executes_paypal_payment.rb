@@ -6,10 +6,11 @@ class ExecutesPaypalPayment
     @token = token
     @payer_id = payer_id
     @success = false
+    @continue = true
   end
 
-  def find_payment
-    Payment.find_by(payment_method: "paypal", response_id: payment_id)
+  def payment
+    @payment ||= Payment.find_by(payment_method: "paypal", response_id: payment_id)
   end
 
   def paypal_payment
@@ -18,12 +19,33 @@ class ExecutesPaypalPayment
 
   def run
     Payment.transaction do
-      @payment = find_payment
-      execute_ok = paypal_payment.execute(payer_id: payer_id)
-      return unless execute_ok
+      pre_purchase
+      purchase
+      post_purchase
+    end
+  end
+
+  def pre_purchase
+    @continue = true
+  end
+
+  def purchase
+    return unless @continue
+    @continue = paypal_payment.execute(payer_id: payer_id)
+  end
+
+  def post_purchase
+    if @continue
       payment.tickets.each(&:purchased!)
       payment.succeeded!
       self.success = true
+    else
+      payment.tickets.each(&:waiting!)
+      payment.failed!
     end
   end
 end
+
+
+
+
