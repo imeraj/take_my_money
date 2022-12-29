@@ -31,5 +31,6 @@ module TakeMyMoney
 
     # Don't generate system test files.
     config.generators.system_tests = nil
+    config.active_job.queue_adapter = :delayed_job
   end
 end
